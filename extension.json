@@ -6,10 +6,10 @@
     "name": "KTM",
     "description": "IronPython Scripts for Autodesk Revit",
     "author": "SGrodnik",
-    "author_profile": "",
-    "url": "",
-    "website": "",
-    "image": "",
+    "author_profile": "https://github.com/sgrodnik",
+    "url": "https://github.com/sgrodnik/ktm.extension.git",
+    "website": "https://github.com/sgrodnik",
+    "image": "https://www.krastsvetmet.ru/local/templates/krastsvetmet/assets/img/logo_ru_n.svg",
     "templates": {
         "author": "SGrodnik",
         "docpath": "https://www.youtube.com/watch?v="
