@@ -9,12 +9,36 @@ app = __revit__.Application
 
 time_str = str(datetime.datetime.now()).split('.')[0].replace(':', '-')
 log_path = os.getenv('temp') + "\\Family Info " + time_str + ".csv"
+log_path_short = os.getenv('temp') + "\\Family Info " + time_str + " short.csv"
 
 
 def log(s):
     with open(log_path, "a") as myfile:
         myfile.write(s.encode("utf-8") + '\n')
 
+
+log_info_titles_short = [
+    '#',
+    'Путь',
+    'Размер, Кбайт',
+    'Семейство',
+    'Тип параметра',
+    'Группа параметров',
+    'Имя параметра',
+    'GUID',
+    'BuiltInParameter',
+    'Единицы',
+    'По экземпляру',
+    'Формула',
+]
+
+
+def log_short(s):
+    with open(log_path_short, "a") as myfile:
+        myfile.write(s.encode("utf-8") + '\n')
+
+
+log_short('\t'.join(log_info_titles_short))
 
 GroupOrder = {
     DB.BuiltInParameterGroup.PG_CONSTRAINTS:                                    1,  # Зависимости
@@ -162,8 +186,11 @@ class Fam:
             self.size = os.path.getsize(path) / 1024
             self.doc = app.OpenDocumentFile(path)
             self.title = self.doc.Title
-            self.params = []
-            # self.params = [Param(p, self) for p in self.doc.FamilyManager.GetParameters()]
+            # self.params = []
+            try:
+                self.params = [Param_short(p, self).log() for p in self.doc.FamilyManager.GetParameters()]
+            except Exception as e:
+                log_short('Ошибка семейства: ' + self.path + ': ' + str(e))
             self.types = list(self.doc.FamilyManager.Types)
             self.types = self.types if len(self.types) == 1 else [i for i in self.types if i.Name != ' ']
             LIMIT = 10
@@ -279,6 +306,50 @@ class Param:
                 self.units = ''
         except Exception as e:
             log('Ошибка параметра: ' + self.name + ': ' + str(e))
+
+
+class Param_short:
+    objects = []
+    counter = 0
+
+    def __init__(self, Param, Fam):
+        self.__class__.counter += 1
+        self.__class__.objects.append(self)
+        self.id = self.__class__.counter
+        self.fam = Fam
+        self.param = Param
+        self.name = Param.Definition.Name
+        try:
+            self.parameter_type = Param.Definition.ParameterType
+            self.parameter_group = Param.Definition.ParameterGroup
+            self.is_shared = Param.IsShared
+            self.guid = Param.GUID if self.is_shared else ''
+            self.built_in_parameter = Param.Definition.BuiltInParameter
+            self.formula = Param.Formula
+            self.is_instance = Param.IsInstance
+            try:
+                self.units = Param.DisplayUnitType if HasDisplayUnitType(Param) else ''
+            except:
+                self.units = ''
+        except Exception as e:
+            log_short('Ошибка параметра: ' + self.name + ': ' + str(e))
+
+    def log(self):
+        info_items = []
+        info_items.append(self.__class__.counter)
+        info_items.append(self.fam.path)
+        info_items.append(self.fam.size)
+        info_items.append(self.fam.title)
+        info_items.append(self.parameter_type)
+        info_items.append(self.parameter_group)
+        info_items.append(self.name)
+        info_items.append(self.guid)
+        info_items.append(self.built_in_parameter)
+        info_items.append(self.units)
+        info_items.append(self.is_instance)
+        info_items.append(self.formula)
+        info = '\t'.join([str(i) for i in info_items])
+        log_short(info)
 
 
 log_info_titles = [
