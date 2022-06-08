@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Docstring
-"""
+
 import Autodesk.Revit.DB as DB
 import datetime
 import os
