@@ -7,7 +7,6 @@ import Autodesk.Revit.DB as DB
 import Autodesk.Revit.UI as UI
 from pyrevit import forms
 from pyrevit import script
-from System import Guid
 
 clr.AddReference('System')
 
@@ -15,7 +14,7 @@ app = __revit__.Application
 doc = __revit__.ActiveUIDocument.Document
 output = script.get_output()
 
-script_name = 'Конкатенировать параметры'
+script_name = 'Сцепить текст'
 param_def_source = None
 param_source_name = ''
 param_def_target = None

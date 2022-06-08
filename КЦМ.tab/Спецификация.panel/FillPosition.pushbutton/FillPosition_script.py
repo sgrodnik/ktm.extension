@@ -17,7 +17,7 @@ doc = __revit__.ActiveUIDocument.Document
 output = script.get_output()
 cache = {}
 
-script_name = 'Проставить позицию'
+script_name = 'Нумеровать столбец'
 ADSK_POS = Guid('ae8ff999-1f22-4ed7-ad33-61503d85f0f4')
 ADSK_POS_name = 'ADSK_Позиция'
 param_to_numerate = None
@@ -77,8 +77,8 @@ def auto_numerate_pos():
 def request_user_config():
     while True:
         dialog = UI.TaskDialog(script_name)
-        dialog.MainContent = 'Задайте конфигурацию и нажмите Esc или ОК'
-        dialog.FooterText = 'Esc - продолжить'
+        dialog.MainContent = 'Выберите параметр и начальное значение:'
+        dialog.FooterText = 'Для продолжения нажмите ОК или Esc'
         dialog.TitleAutoPrefix = False
         dialog.AllowCancellation = True
         initialize_or_edit_parameter()
@@ -146,7 +146,9 @@ def initialize_or_edit_parameter(edit=False):
     if edit:
         param_name = forms.SelectFromList.show(
             available_param_names,
-            button_name='Выберите параметр спецификации для нумерации'
+            button_name='ОК',
+            title='Выберите параметр',
+            width=300, height=400
         )
         cfg.fill_position_parameter = param_name
         script.save_config()
