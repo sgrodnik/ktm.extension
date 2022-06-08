@@ -94,7 +94,7 @@ def request_user_config():
                                                start_number),
             'Задать другое начальное значение'
         )
-        dialog.CommonButtons = UI.TaskDialogCommonButtons.Close |\
+        dialog.CommonButtons = UI.TaskDialogCommonButtons.Close | \
                                UI.TaskDialogCommonButtons.Ok
         dialog.DefaultButton = UI.TaskDialogResult.Ok
         res = dialog.Show()
@@ -103,8 +103,8 @@ def request_user_config():
             utils.check(param_to_numerate_name)
         elif res == UI.TaskDialogResult.CommandLink2:
             initialize_or_edit_start_number(edit=True)
-        elif res == UI.TaskDialogResult.Ok or\
-             res == UI.TaskDialogResult.Cancel:
+        elif res == UI.TaskDialogResult.Ok or \
+                res == UI.TaskDialogResult.Cancel:
             utils.check(param_to_numerate_name)
             return
         elif res == UI.TaskDialogResult.Close:

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import clr
 import sys
-import traceback
 import utils
 
 import Autodesk.Revit.DB as DB

@@ -3,10 +3,7 @@ import clr
 import traceback
 
 import Autodesk.Revit.DB as DB
-import Autodesk.Revit.UI as UI
-from pyrevit import forms
 from pyrevit import script
-from System import Guid
 
 clr.AddReference('System')
 
@@ -52,8 +49,8 @@ def get_elem_ids_from_other_rows(schedule, row_number_to_exclude):
                     global row_number
                     if type(row_number) == int:
                         row_number -= 1
-            remains = DB.FilteredElementCollector(doc, schedule.Id)\
-                        .ToElementIds()
+            remains = DB.FilteredElementCollector(doc, schedule.Id) \
+                .ToElementIds()
             cache[row_number_to_exclude] = remains
             t.RollBack()
     return cache[row_number_to_exclude]
@@ -75,9 +72,8 @@ def param_is_in_filters_or_sorting(param_name):
     group_sort_fields = list(doc.ActiveView.Definition.GetSortGroupFields())
     group_sort_fields += list(doc.ActiveView.Definition.GetFilters())
     for field in group_sort_fields:
-        banned_field_name = doc.ActiveView.Definition\
+        banned_field_name = doc.ActiveView.Definition \
             .GetField(field.FieldId).GetName()
         if param_name == banned_field_name:
             return True
     return False
-
