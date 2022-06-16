@@ -22,13 +22,10 @@ def select_segment():
     adjacent_els = []
     for line in adjacent_lines:
         adjacent_els += get_detail_components_located_on_line(line)
-    if adjacent_els:
-        if shift_click:
-            utils.select(adjacent_els + adjacent_lines)
-        else:
-            utils.select(adjacent_els)
-    else:
-        utils.select(adjacent_lines)
+    ids_to_select = adjacent_els
+    if not adjacent_els or shift_click:
+        ids_to_select += adjacent_lines
+    utils.select(ids_to_select)
 
 
 def get_underlying_lines(el):
