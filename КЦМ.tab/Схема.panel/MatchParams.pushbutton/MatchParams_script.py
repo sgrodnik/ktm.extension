@@ -19,9 +19,11 @@ def main():
 def match_params():
     el = sel[0]
     ask_user_for_params(el)
+    if not params_to_match:
+        return
     category_name = sel[0].LookupParameter('Категория').AsValueString()
-    done = []
-    with DB.Transaction(doc, 'transaction_name') as transaction:
+    done = [el]
+    with DB.Transaction(doc, script_name) as transaction:
         transaction.Start()
         while True:
             try:
