@@ -40,7 +40,9 @@ def get_underlying_lines(el):
     bounding_box = el.get_BoundingBox(doc.ActiveView)
     outline = DB.Outline(bounding_box.Min, bounding_box.Max)
     bb_filter = DB.BoundingBoxIntersectsFilter(outline)
-    collector = DB.FilteredElementCollector(doc).WherePasses(bb_filter)\
+    collector = DB.FilteredElementCollector(doc) \
+        .OfCategory(DB.BuiltInCategory.OST_Lines) \
+        .WherePasses(bb_filter) \
         .ToElements()
     return list(collector)
 
