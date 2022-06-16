@@ -2,7 +2,7 @@
 from Autodesk.Revit import DB
 
 import utils
-from constants import doc, sel
+from constants import doc, sel, shift_click
 
 script_name = 'Выбрать сегмент'
 
@@ -23,7 +23,7 @@ def select_segment():
     for line in adjacent_lines:
         adjacent_els += get_detail_components_located_on_line(line)
     if adjacent_els:
-        if __shiftclick__:
+        if shift_click:
             utils.select(adjacent_els + adjacent_lines)
         else:
             utils.select(adjacent_els)
