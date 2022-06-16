@@ -2,7 +2,7 @@
 import sys
 import traceback
 
-from Autodesk.Revit import DB
+from Autodesk.Revit import DB, UI
 from System.Collections.Generic import List
 from pyrevit import script
 
@@ -51,3 +51,17 @@ def select(elements):
         if type(elements[0]) is not DB.ElementId:
             elements = [el.Id for el in elements]
         uidoc.Selection.SetElementIds(List[DB.ElementId](elements))
+
+
+class CategoryNameSelectionFilter(UI.Selection.ISelectionFilter):
+    def __init__(self, category_name):
+        self.category_name = category_name
+
+    def AllowElement(self, e):
+        if self.category_name in e.Category.Name:
+            return True
+        else:
+            return False
+
+    def AllowReference(self, ref, point):
+        return True

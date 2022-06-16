@@ -74,24 +74,10 @@ def pick_element(category_name):
                      '{} [Esc для отмены]'.format(category_name)
     reference = uidoc.Selection.PickObject(
         UI.Selection.ObjectType.Element,
-        CustomISelectionFilter(category_name),
+        utils.CategoryNameSelectionFilter(category_name),
         footer_message)
     target = doc.GetElement(reference.ElementId)
     return target
-
-
-class CustomISelectionFilter(UI.Selection.ISelectionFilter):
-    def __init__(self, nom_categorie):
-        self.nom_categorie = nom_categorie
-
-    def AllowElement(self, e):
-        if self.nom_categorie in e.Category.Name:
-            return True
-        else:
-            return False
-
-    def AllowReference(self, ref, point):
-        return True
 
 
 def set_params(target):
