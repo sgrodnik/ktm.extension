@@ -3,10 +3,7 @@ from Autodesk.Revit import DB
 from System.Collections.Generic import List
 
 import utils
-
-app = __revit__.Application
-doc = __revit__.ActiveUIDocument.Document
-uidoc = __revit__.ActiveUIDocument
+from constants import doc, uidoc
 
 script_name = 'Выбрать сегмент'
 

@@ -5,9 +5,7 @@ from pyrevit import script
 
 import schedule_utils
 import utils
-
-app = __revit__.Application
-doc = __revit__.ActiveUIDocument.Document
+from constants import doc
 
 script_name = 'Сцепить текст'
 param_def_source = None

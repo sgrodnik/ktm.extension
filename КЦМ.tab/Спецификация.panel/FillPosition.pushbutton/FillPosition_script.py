@@ -6,9 +6,8 @@ from pyrevit import script
 
 import schedule_utils
 import utils
+from constants import doc
 
-app = __revit__.Application
-doc = __revit__.ActiveUIDocument.Document
 cache = {}
 
 script_name = 'Нумеровать столбец'
