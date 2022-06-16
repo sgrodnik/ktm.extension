@@ -32,7 +32,7 @@ def match_params():
             except Exceptions.OperationCanceledException:
                 break
         transaction.Commit()
-    select(done)
+    utils.select(done)
 
 
 def ask_user_for_params(el):

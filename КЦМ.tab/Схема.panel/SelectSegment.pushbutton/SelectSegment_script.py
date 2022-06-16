@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from Autodesk.Revit import DB
-from System.Collections.Generic import List
 
 import utils
 from constants import doc, uidoc
@@ -25,11 +24,11 @@ def select_segment():
         adjacent_els += get_detail_components_located_on_line(line)
     if adjacent_els:
         if __shiftclick__:
-            select(adjacent_els + adjacent_lines)
+            utils.select(adjacent_els + adjacent_lines)
         else:
-            select(adjacent_els)
+            utils.select(adjacent_els)
     else:
-        select(adjacent_lines)
+        utils.select(adjacent_lines)
 
 
 def get_selected_element():
@@ -105,13 +104,6 @@ def does_element_belong_to_line(el, line):
         intersection_result.Parameter)
     projection_is_between_ends = 0 < normalized_parameter < 1
     return projection_is_between_ends
-
-
-def select(elements):
-    if len(elements):
-        if type(elements[0]) is not DB.ElementId:
-            elements = [el.Id for el in elements]
-        uidoc.Selection.SetElementIds(List[DB.ElementId](elements))
 
 
 if __name__ == '__main__':

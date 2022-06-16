@@ -2,7 +2,11 @@
 import sys
 import traceback
 
+from Autodesk.Revit import DB
+from System.Collections.Generic import List
 from pyrevit import script
+
+from constants import uidoc
 
 output = script.get_output()
 
@@ -40,3 +44,10 @@ def ft_to_mm(ft):
 
 def exit():
     sys.exit()
+
+
+def select(elements):
+    if elements:
+        if type(elements[0]) is not DB.ElementId:
+            elements = [el.Id for el in elements]
+        uidoc.Selection.SetElementIds(List[DB.ElementId](elements))
