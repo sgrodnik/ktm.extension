@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-import Autodesk.Revit.DB as DB
-import Autodesk.Revit.Exceptions as Exceptions
-import Autodesk.Revit.UI as UI
+from Autodesk.Revit import DB, Exceptions, UI
 from pyrevit import forms
-from pyrevit import script
 
 import utils
 from bip_group_order import get_group_order_number
@@ -11,7 +8,6 @@ from bip_group_order import get_group_order_number
 app = __revit__.Application
 doc = __revit__.ActiveUIDocument.Document
 uidoc = __revit__.ActiveUIDocument
-output = script.get_output()
 
 params_to_match = []
 
@@ -20,13 +16,7 @@ sel = [doc.GetElement(el_id) for el_id in uidoc.Selection.GetElementIds()]
 
 
 def main():
-    utils.init_output()
-    try:
-        match_params()
-        output.log_success('Готово')
-    except Exception as e:
-        output.log_error('Произошла ошибка: {}'.format(e))
-        print(utils.get_decorated_traceback())
+    utils.init_output_and_safely_run(match_params)
 
 
 def match_params():

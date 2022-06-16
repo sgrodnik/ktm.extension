@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-import Autodesk.Revit.DB as DB
-import Autodesk.Revit.UI as UI
+from Autodesk.Revit import DB, UI
 from System import Guid
 from pyrevit import forms
 from pyrevit import script
@@ -10,7 +9,6 @@ import utils
 
 app = __revit__.Application
 doc = __revit__.ActiveUIDocument.Document
-output = script.get_output()
 cache = {}
 
 script_name = 'Нумеровать столбец'
@@ -24,13 +22,7 @@ row_number = None
 
 
 def main():
-    utils.init_output()
-    try:
-        auto_numerate_pos()
-        output.log_success('Готово')
-    except Exception as e:
-        output.log_error('Произошла ошибка: {}'.format(e))
-        print(utils.get_decorated_traceback())
+    utils.init_output_and_safely_run(auto_numerate_pos)
 
 
 def auto_numerate_pos():

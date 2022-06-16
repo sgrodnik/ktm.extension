@@ -9,6 +9,16 @@ output = script.get_output()
 MM_IN_FT = 304.8
 
 
+def init_output_and_safely_run(function):
+    init_output()
+    try:
+        function()
+        output.log_success('Готово')
+    except Exception as e:
+        output.log_error('Произошла ошибка: {}'.format(e))
+        print(get_decorated_traceback())
+
+
 def init_output():
     output.close_others(all_open_outputs=True)
     output.self_destruct(120)

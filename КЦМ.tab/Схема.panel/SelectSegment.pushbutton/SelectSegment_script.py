@@ -1,26 +1,18 @@
 # -*- coding: utf-8 -*-
-import Autodesk.Revit.DB as DB
+from Autodesk.Revit import DB
 from System.Collections.Generic import List
-from pyrevit import script
 
 import utils
 
 app = __revit__.Application
 doc = __revit__.ActiveUIDocument.Document
 uidoc = __revit__.ActiveUIDocument
-output = script.get_output()
 
 script_name = 'Выбрать сегмент'
 
 
 def main():
-    utils.init_output()
-    try:
-        select_segment()
-        output.log_success('Готово')
-    except Exception as e:
-        output.log_error('Произошла ошибка: {}'.format(e))
-        print(utils.get_decorated_traceback())
+    utils.init_output_and_safely_run(select_segment)
 
 
 def select_segment():
