@@ -1,24 +1,17 @@
 # -*- coding: utf-8 -*-
-import clr
-
-import utils
-
 import Autodesk.Revit.DB as DB
-import Autodesk.Revit.UI as UI
 import Autodesk.Revit.Exceptions as Exceptions
+import Autodesk.Revit.UI as UI
 from pyrevit import forms
 from pyrevit import script
-from System.Collections.Generic import List
 
-MM_IN_FT = 304.8
-
-clr.AddReference('System')
+import utils
+from bip_group_order import get_group_order_number
 
 app = __revit__.Application
 doc = __revit__.ActiveUIDocument.Document
 uidoc = __revit__.ActiveUIDocument
 output = script.get_output()
-from bip_group_order import get_group_order_number
 
 params_to_match = []
 

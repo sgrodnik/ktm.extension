@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
-import clr
-import sys
-import traceback
-import utils
-
 import Autodesk.Revit.DB as DB
 import Autodesk.Revit.UI as UI
+from System import Guid
 from pyrevit import forms
 from pyrevit import script
-from System import Guid
 
-clr.AddReference('System')
+import schedule_utils
+import utils
 
 app = __revit__.Application
 doc = __revit__.ActiveUIDocument.Document
@@ -28,33 +24,22 @@ row_number = None
 
 
 def main():
-    init_output()
+    utils.init_output()
     try:
         auto_numerate_pos()
         output.log_success('Готово')
     except Exception as e:
         output.log_error('Произошла ошибка: {}'.format(e))
-        print(get_decorated_traceback())
-
-
-def init_output():
-    output.close_others(all_open_outputs=True)
-    output.self_destruct(120)
-
-
-def get_decorated_traceback():
-    trace = traceback.format_exc()
-    trace = '-' * 100 + '\nСтек вызовов: {}\n'.format(trace) + '-' * 100
-    return trace
+        print(utils.get_decorated_traceback())
 
 
 def auto_numerate_pos():
     global row_number
-    utils.check_active_view_is_schedule()
+    schedule_utils.check_active_view_is_schedule()
     request_user_config()
     schedule = doc.ActiveView
     transaction_name = script_name + ' ' + schedule.Name
-    number_of_rows = utils.get_number_of_rows_of_schedule(schedule)
+    number_of_rows = schedule_utils.get_number_of_rows_of_schedule(schedule)
     if not number_of_rows:
         return
     row_number = start_number
@@ -62,7 +47,7 @@ def auto_numerate_pos():
         transaction.Start()
         start_index = 0
         for row_index in range(start_index, number_of_rows):
-            row_elements = utils.get_row_elements(schedule, row_index)
+            row_elements = schedule_utils.get_row_elements(schedule, row_index)
             value = '{}{}'.format(start_number_prefix, row_number)
             set_value_to_els(value, row_elements)
             if type(row_number) == int and row_elements:
@@ -100,15 +85,15 @@ def request_user_config():
         res = dialog.Show()
         if res == UI.TaskDialogResult.CommandLink1:
             initialize_or_edit_parameter(edit=True)
-            utils.check(param_to_numerate_name)
+            schedule_utils.check(param_to_numerate_name)
         elif res == UI.TaskDialogResult.CommandLink2:
             initialize_or_edit_start_number(edit=True)
         elif res == UI.TaskDialogResult.Ok or \
                 res == UI.TaskDialogResult.Cancel:
-            utils.check(param_to_numerate_name)
+            schedule_utils.check(param_to_numerate_name)
             return
         elif res == UI.TaskDialogResult.Close:
-            sys.exit()
+            utils.exit()
 
 
 def initialize_or_edit_start_number(edit=False):

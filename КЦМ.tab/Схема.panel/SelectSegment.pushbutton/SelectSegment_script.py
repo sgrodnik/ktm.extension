@@ -1,14 +1,9 @@
 # -*- coding: utf-8 -*-
-import clr
-import utils
 import Autodesk.Revit.DB as DB
-from pyrevit import script
 from System.Collections.Generic import List
+from pyrevit import script
 
-
-MM_IN_FT = 304.8
-
-clr.AddReference('System')
+import utils
 
 app = __revit__.Application
 doc = __revit__.ActiveUIDocument.Document
@@ -26,14 +21,6 @@ def main():
     except Exception as e:
         output.log_error('Произошла ошибка: {}'.format(e))
         print(utils.get_decorated_traceback())
-
-
-def mm_to_ft(mm):
-    return mm / MM_IN_FT
-
-
-def ft_to_mm(ft):
-    return ft * MM_IN_FT
 
 
 def select_segment():
@@ -122,7 +109,7 @@ def does_element_belong_to_line(el, line):
         return False
     point = el.Location.Point
     intersection_result = line.GeometryCurve.Project(point)
-    is_far_away = intersection_result.Distance > mm_to_ft(0.1)
+    is_far_away = intersection_result.Distance > utils.mm_to_ft(0.1)
     if is_far_away:
         return False
     normalized_parameter  = line.GeometryCurve.ComputeNormalizedParameter(

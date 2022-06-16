@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
-import clr
-import sys
-import utils
-
 import Autodesk.Revit.DB as DB
 import Autodesk.Revit.UI as UI
 from pyrevit import forms
 from pyrevit import script
 
-clr.AddReference('System')
+import schedule_utils
+import utils
 
 app = __revit__.Application
 doc = __revit__.ActiveUIDocument.Document
@@ -33,15 +30,15 @@ def main():
 
 
 def concat_params():
-    utils.check_active_view_is_schedule()
+    schedule_utils.check_active_view_is_schedule()
     request_user_config()
     schedule = doc.ActiveView
-    number_of_rows = utils.get_number_of_rows_of_schedule(schedule)
+    number_of_rows = schedule_utils.get_number_of_rows_of_schedule(schedule)
     with DB.Transaction(doc, script_name) as transaction:
         transaction.Start()
         start_index = 0 + schedule.Definition.ShowHeaders
         for row_index in range(start_index, number_of_rows):
-            row_elements = utils.get_row_elements(schedule, row_index)
+            row_elements = schedule_utils.get_row_elements(schedule, row_index)
             concatenated = collect_values(row_elements)
             set_value_to_els(concatenated, row_elements)
         transaction.Commit()
@@ -79,17 +76,17 @@ def request_user_config():
         res = dialog.Show()
         if res == UI.TaskDialogResult.CommandLink1:
             initialize_or_edit_param_source(edit=True)
-            utils.check(param_target_name)
+            schedule_utils.check(param_target_name)
         elif res == UI.TaskDialogResult.CommandLink2:
             initialize_or_edit_param_target(edit=True)
         elif res == UI.TaskDialogResult.CommandLink3:
             initialize_or_edit_divider(edit=True)
         elif res == UI.TaskDialogResult.Ok or \
                 res == UI.TaskDialogResult.Cancel:
-            utils.check(param_target_name)
+            schedule_utils.check(param_target_name)
             return
         elif res == UI.TaskDialogResult.Close:
-            sys.exit()
+            utils.exit()
 
 
 def initialize_or_edit_param_source(edit=False):
