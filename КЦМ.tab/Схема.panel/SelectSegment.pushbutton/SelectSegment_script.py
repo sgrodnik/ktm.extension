@@ -2,7 +2,7 @@
 from Autodesk.Revit import DB
 
 import utils
-from constants import doc, uidoc
+from constants import doc, sel
 
 script_name = 'Выбрать сегмент'
 
@@ -13,7 +13,7 @@ def main():
 
 def select_segment():
     initial_lines = []
-    for el in get_selected_element():
+    for el in sel:
         if type(el) == DB.DetailLine:
             initial_lines.append(el)
         elif type(el) == DB.FamilyInstance:
@@ -29,11 +29,6 @@ def select_segment():
             utils.select(adjacent_els)
     else:
         utils.select(adjacent_lines)
-
-
-def get_selected_element():
-    sel = [doc.GetElement(el_id) for el_id in uidoc.Selection.GetElementIds()]
-    return sel
 
 
 def get_underlying_lines(el):

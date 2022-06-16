@@ -4,12 +4,11 @@ from pyrevit import forms
 
 import utils
 from bip_group_order import get_group_order_number
-from constants import doc, uidoc
+from constants import doc, uidoc, sel
 
 params_to_match = []
 
 script_name = 'Сопоставить параметры'
-sel = [doc.GetElement(el_id) for el_id in uidoc.Selection.GetElementIds()]
 
 
 def main():
