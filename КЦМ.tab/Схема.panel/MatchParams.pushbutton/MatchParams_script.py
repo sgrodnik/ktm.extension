@@ -104,7 +104,9 @@ def get_typed_value(param):
         return param.AsDouble()
     elif param.StorageType == DB.StorageType.String:
         return param.AsString()
-    raise Exception('Недопустимый тип параметра {}'.format(
+    elif param.StorageType == DB.StorageType.ElementId:
+        return param.AsElementId()
+    raise Exception('Недопустимый тип параметра "{}"'.format(
         param.Definition.Name))
 
 
