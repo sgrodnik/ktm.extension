@@ -45,10 +45,7 @@ def get_elem_ids_from_other_rows(schedule, row_number_to_exclude):
             try:
                 table.RemoveRow(row_number_to_exclude)
             except:
-                if 'row_number' in globals():
-                    global row_number
-                    if type(row_number) == int:
-                        row_number -= 1
+                pass
             remains = DB.FilteredElementCollector(doc, schedule.Id) \
                 .ToElementIds()
             cache[row_number_to_exclude] = remains

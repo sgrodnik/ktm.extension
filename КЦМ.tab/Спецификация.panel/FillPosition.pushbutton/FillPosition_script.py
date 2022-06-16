@@ -60,12 +60,12 @@ def auto_numerate_pos():
     row_number = start_number
     with DB.Transaction(doc, transaction_name) as transaction:
         transaction.Start()
-        start_index = 0 + schedule.Definition.ShowHeaders
+        start_index = 0
         for row_index in range(start_index, number_of_rows):
             row_elements = utils.get_row_elements(schedule, row_index)
             value = '{}{}'.format(start_number_prefix, row_number)
             set_value_to_els(value, row_elements)
-            if type(row_number) == int:
+            if type(row_number) == int and row_elements:
                 row_number += 1
         transaction.SetName('Проставить {} {}÷{}'.format(
             param_to_numerate_name,
