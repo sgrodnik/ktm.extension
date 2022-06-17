@@ -81,7 +81,11 @@ def pick_element(category_name):
 
 def set_params(target):
     for param in params_to_match:
-        target.get_Parameter(param.Definition).Set(get_typed_value(param))
+        parameter = target.get_Parameter(param.Definition) or \
+                    target.LookupParameter(param.Definition.Name)
+        if not parameter or parameter.IsReadOnly:
+            continue
+        parameter.Set(get_typed_value(param))
 
 
 def get_typed_value(param):
