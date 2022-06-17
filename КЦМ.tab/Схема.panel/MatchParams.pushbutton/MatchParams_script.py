@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 from Autodesk.Revit import DB, Exceptions, UI
 from pyrevit import forms
+from pyrevit import script
 
 import utils
 from bip_group_order import get_group_order_number
-from constants import doc, uidoc, sel
+from constants import doc, uidoc, sel, shift_click
 
 params_to_match = []
+denied_params = []
+source_el = None
 
 script_name = 'Сопоставить параметры'
 
@@ -16,12 +19,15 @@ def main():
 
 
 def match_params():
-    el = sel[0]
-    ask_user_for_params(el)
+    global source_el
+    if not sel:
+        return
+    source_el = sel[0]
+    ask_user_for_params()
     if not params_to_match:
         return
     category_name = sel[0].LookupParameter('Категория').AsValueString()
-    done = [el]
+    done = [source_el]
     with DB.Transaction(doc, script_name) as transaction:
         transaction.Start()
         while True:
@@ -38,22 +44,64 @@ def match_params():
     utils.select(done)
 
 
-def ask_user_for_params(el):
+def ask_user_for_params():
     global params_to_match
-    params = [Param(i) for i in el.GetOrderedParameters()]
+    initialize_or_edit_deny_list(edit=shift_click)
+    params = []
+    for p in source_el.GetOrderedParameters():
+        is_checked = False if p.Definition.Name in denied_params else None
+        params.append(Param(p, is_checked=is_checked))
     params = sorted(params, key=lambda p: p.param_group_order)
     params = [p for p in params if p.is_valid]
+    title = 'Выберите параметры (в черном листе {} эл.)'.format(
+        len(denied_params))
     params_to_match = forms.SelectFromList.show(
         params,
         multiselect=True,
         button_name='ОК',
-        title='Выберите параметры',
-        width=400, height=700
+        title=title,
+        width=450, height=700
     )
 
 
+def initialize_or_edit_deny_list(edit=False):
+    global denied_params
+    denied_params = restore_denied_params()
+    if not edit:
+        return
+    params = []
+    for p in source_el.GetOrderedParameters():
+        params.append(Param(p, is_checked=p.Definition.Name in denied_params))
+    params = sorted(params, key=lambda p: p.param_group_order)
+    params = [p for p in params if p.is_valid]
+    params_to_deny = forms.SelectFromList.show(
+        params,
+        multiselect=True,
+        button_name='ОК',
+        title='Чёрны лист',
+        width=450, height=700
+    )
+    store_denied_params(params_to_deny)
+
+
+def restore_denied_params():
+    cfg = script.get_config()
+    params = cfg.get_option('denied_params', [])
+    return params
+
+
+def store_denied_params(params):
+    global denied_params
+    if params is None:
+        return
+    denied_params = [param.Definition.Name for param in params]
+    cfg = script.get_config()
+    cfg.denied_params = denied_params
+    script.save_config()
+
+
 class Param(forms.TemplateListItem):
-    def __init__(self, parameter):
+    def __init__(self, parameter, is_checked=None):
         forms.TemplateListItem.__init__(self, parameter)
         self.parameter = parameter
         self.is_read_only = parameter.IsReadOnly
@@ -62,7 +110,10 @@ class Param(forms.TemplateListItem):
         self.value = parameter.HasValue and (parameter.AsString() or
                                              parameter.AsValueString() or '')
         self.is_valid = not self.is_read_only
-        self.state = bool(self.value)
+        if is_checked is None:
+            self.state = bool(self.value)
+        else:
+            self.state = is_checked
 
     @property
     def name(self):
