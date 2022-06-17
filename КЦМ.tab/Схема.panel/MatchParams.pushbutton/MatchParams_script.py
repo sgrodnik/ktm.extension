@@ -32,6 +32,8 @@ def match_params():
                 done.append(target)
             except Exceptions.OperationCanceledException:
                 break
+        transaction.SetName('{} ({} эл.)'.format(transaction.GetName(),
+                                                 len(done) - 1))
         transaction.Commit()
     utils.select(done)
 
