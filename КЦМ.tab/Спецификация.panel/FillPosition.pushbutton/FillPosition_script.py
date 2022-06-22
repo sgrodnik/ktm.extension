@@ -18,6 +18,7 @@ param_to_numerate_name = ''
 start_number = ''
 start_number_prefix = ''
 row_number = None
+re_zero_counter_mode = False
 
 
 def main():
@@ -41,8 +42,12 @@ def auto_numerate_pos():
             row_elements = schedule_utils.get_row_elements(schedule, row_index)
             value = '{}{}'.format(start_number_prefix, row_number)
             set_value_to_els(value, row_elements)
-            if type(row_number) == int and row_elements:
-                row_number += 1
+            if type(row_number) == int:
+                if row_elements:
+                    row_number += 1
+                else:
+                    if re_zero_counter_mode:
+                        row_number = 1
         transaction.SetName('Проставить {} {}÷{}'.format(
             param_to_numerate_name,
             '{}{}'.format(start_number_prefix, start_number),
@@ -51,6 +56,7 @@ def auto_numerate_pos():
 
 
 def request_user_config():
+    global re_zero_counter_mode
     while True:
         dialog = UI.TaskDialog(script_name)
         dialog.MainContent = 'Выберите параметр и начальное значение:'
@@ -73,7 +79,9 @@ def request_user_config():
         dialog.CommonButtons = UI.TaskDialogCommonButtons.Close | \
                                UI.TaskDialogCommonButtons.Ok
         dialog.DefaultButton = UI.TaskDialogResult.Ok
+        dialog.VerificationText = 'Обнулять на заголовках'
         res = dialog.Show()
+        re_zero_counter_mode = dialog.WasVerificationChecked()
         if res == UI.TaskDialogResult.CommandLink1:
             initialize_or_edit_parameter(edit=True)
             schedule_utils.check(param_to_numerate_name)
