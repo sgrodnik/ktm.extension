@@ -42,12 +42,7 @@ def auto_numerate_pos():
             row_elements = schedule_utils.get_row_elements(schedule, row_index)
             value = '{}{}'.format(start_number_prefix, row_number)
             set_value_to_els(value, row_elements)
-            if type(row_number) == int:
-                if row_elements:
-                    row_number += 1
-                else:
-                    if re_zero_counter_mode:
-                        row_number = 1
+            increase_counter_optionally(row_elements)
         transaction.SetName('Проставить {} {}÷{}'.format(
             param_to_numerate_name,
             '{}{}'.format(start_number_prefix, start_number),
@@ -228,6 +223,16 @@ def get_parents(el):
         parents.append(parent)
         parents += get_parents(parent)
     return parents
+
+
+def increase_counter_optionally(row_elements):
+    global row_number
+    if type(row_number) == int:
+        if row_elements:
+            row_number += 1
+        else:
+            if re_zero_counter_mode:
+                row_number = 1
 
 
 if __name__ == '__main__':
