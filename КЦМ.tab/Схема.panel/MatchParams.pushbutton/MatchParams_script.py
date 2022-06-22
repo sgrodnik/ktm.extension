@@ -78,7 +78,7 @@ def initialize_or_edit_deny_list(edit=False):
         params,
         multiselect=True,
         button_name='ОК',
-        title='Чёрны лист',
+        title='Чёрный лист',
         width=450, height=700
     )
     store_denied_params(params_to_deny)
