@@ -81,7 +81,8 @@ def get_detail_components_located_on_line(line):
         .WhereElementIsNotElementType()
     els = []
     for el in collector:
-        if does_element_belong_to_line(el, line):
+        if el.OwnerViewId == doc.ActiveView.Id and \
+                does_element_belong_to_line(el, line):
             els.append(el)
     return els
 
